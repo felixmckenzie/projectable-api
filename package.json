@@ -2,9 +2,10 @@
   "name": "projectable-api",
   "version": "1.0.0",
   "description": "Backend for Projectable. A project management application that uses MERN",
+  "type":"module",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --exec babel-node src/index.js",
+    "start": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,9 +27,6 @@
     "mongoose": "^6.7.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.19.6",
-    "@babel/node": "^7.19.1",
-    "@babel/preset-env": "^7.19.4",
     "eslint": "^8.26.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
