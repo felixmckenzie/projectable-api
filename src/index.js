@@ -1,5 +1,5 @@
 import app, { PORT, HOST } from './server.js';
-import logger from './logger.js';
+import logger from './config/logger.js';
 
 app.listen(PORT, HOST, (error) => {
   if (error) {
