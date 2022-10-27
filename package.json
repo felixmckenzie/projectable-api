@@ -2,10 +2,11 @@
   "name": "projectable-api",
   "version": "1.0.0",
   "description": "Backend for Projectable. A project management application that uses MERN",
-  "type":"module",
-  "main": "index.js",
+  "type": "module",
+  "main": "src/index.js",
   "scripts": {
-    "start": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "dev": "NODE_ENV=development nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,7 +25,8 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "helmet": "^6.0.0",
-    "mongoose": "^6.7.0"
+    "mongoose": "^6.7.0",
+    "winston": "^3.8.2"
   },
   "devDependencies": {
     "eslint": "^8.26.0",
