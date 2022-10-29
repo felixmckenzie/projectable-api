@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import app, { PORT, HOST } from './server.js';
 import logger from './config/logger.js';
 
