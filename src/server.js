@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from './config/cors.js';
 import routes from './routes/index.js';
+import 'dotenv/config';
 import { databaseConnector, databaseDisconnector } from './database.js';
 import logger from './config/logger.js';
 
