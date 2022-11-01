@@ -21,3 +21,5 @@ export async function getAllProjects(currentUserId) {
 
   return projects;
 }
+
+

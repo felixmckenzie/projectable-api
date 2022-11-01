@@ -5,6 +5,7 @@ import 'dotenv/config';
 import { databaseConnector } from './database.js';
 import logger from './config/logger.js';
 import admin from 'firebase-admin';
+import { checkIfAuthenticated } from './routes/usersHelpers.js';
 
 const app = express();
 
@@ -32,14 +33,18 @@ if (process.env.NODE_ENV !== 'test') {
   }
 }
 
+
+
 // Users routes:
 app.use('/users', routes.usersRouter);
+//protected routes 
+app.use('/api', checkIfAuthenticated)
 // Projects router:
-app.use('/projects', routes.projectsRouter);
+app.use('/api/projects', routes.projectsRouter);
 // Tasks router:
-app.use('/tasks', routes.tasksRouter);
+app.use('/api/tasks', routes.tasksRouter);
 // Comments router
-app.use('/comments', routes.commentsRouter);
+app.use('/api/comments', routes.commentsRouter);
 
 export const PORT = process.env.PORT || 3000;
 export const HOST = '0.0.0.0';
