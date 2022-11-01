@@ -1,18 +1,18 @@
 import { Router } from 'express';
 import logger from '../config/logger.js';
-import { createProject, getAllProjects } from '../controllers/projectController';
+import { createProject} from '../controllers/projectController.js';
 
 const projectsRouter = Router();
 
-projectsRouter.get('/', async (req, res)=>{
-    try {
-        projects = await getAllProjects(req.body.userId)
-        res.status(200).json(projects)
-    } catch(error){
-        logger.info(error.message)
-        res.status(400).end()
-    }
-})
+// projectsRouter.get('/', async (req, res)=>{
+//     try {
+//         projects = await getAllProjects(req.body.userId)
+//         res.status(200).json(projects)
+//     } catch(error){
+//         logger.info(error.message)
+//         res.status(400).end()
+//     }
+// })
 
 projectsRouter.post('/', async (req, res) => {
   try {

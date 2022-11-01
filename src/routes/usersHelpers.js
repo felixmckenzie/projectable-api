@@ -1,27 +1,30 @@
 import admin from 'firebase-admin';
-import { initializeApp } from 'firebase';
-import { firebaseClientConfig } from '../config/firebaseClientKey';
+import { initializeApp } from 'firebase/app';
+import { firebaseClientConfig } from '../config/firebaseClientKey.js';
 import {
   getAuth,
   updateProfile,
-  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 
 // Initialize the Firebase Client SDK
 initializeApp(firebaseClientConfig);
 
-export async function registerUser(userDetails) {
+export async function registerUser(email, password) {
   return admin
     .auth()
     .createUser({
-      email: userDetails.email,
+      email: email,
       emailVerified: true,
-      password: userDetails.password,
-      displayName: userDetails.displayName,
+      password: password,
       disabled: false,
     })
     .then(async (userRecord) => {
+       let defaultUserClaims = admin
+         .auth()
+         .setCustomUserClaims(userRecord.uid, { regularUser: true })
+         .then(() => {
+         });
       return userRecord;
     })
     .catch((error) => {
@@ -29,18 +32,13 @@ export async function registerUser(userDetails) {
     });
 }
 
-export async function loginUser(userDetails) {
+export async function loginUser(email, password) {
   const clientAuth = getAuth();
-  const signInResult = signInWithEmailAndPassword(
-    clientAuth,
-    userDetails.email,
-    userDetails.password
-  )
+  const signInResult = signInWithEmailAndPassword(clientAuth, email, password)
     .then(async (userCredential) => {
-      const userIdToken = await clientAuth.currentUser.getIdTokenResult(false);
-      console.log(`userIdToken obj is\n ${JSON.stringify(userIdToken)}`);
+    let userIdToken = await clientAuth.currentUser.getIdTokenResult(false);
       return {
-        idToken: userIdToken.token,
+        idToken: userIdToken,
         refreshToken: userCredential.user.refreshToken,
         email: userCredential.user.email,
         emailVerified: userCredential.user.emailVerified,
@@ -50,24 +48,24 @@ export async function loginUser(userDetails) {
       };
     })
     .catch((error) => {
-      return { error: error.message };
+      return { error: error };
     });
-    return signInResult
-}
-
-export async function initUserProfile(user, profileInfo) {
-  const { username } = profileInfo;
-  return updateProfile(user, {
-    displayName: username,
-  })
-    .then(() => {
-      return {};
-    })
-    .catch((error) => {
-      return {
-        error: error.message,
-      };
-    });
+  return signInResult;
 }
 
 
+
+// export async function initUserProfile(user, profileInfo) {
+//   const { username } = profileInfo;
+//   return updateProfile(user, {
+//     displayName: username,
+//   })
+//     .then(() => {
+//       return {};
+//     })
+//     .catch((error) => {
+//       return {
+//         error: error.message,
+//       };
+//     });
+// }

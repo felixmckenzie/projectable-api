@@ -1,4 +1,4 @@
-import { Project } from '../models/ProjectSchema';
+import { Project } from '../models/ProjectSchema.js';
 
 export async function createProject(projectDetails) {
   const newProject = new Project({

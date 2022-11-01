@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { registerUser, initUserProfile, loginUser } from './usersHelpers.js';
+import { registerUser, loginUser } from './usersHelpers.js';
 import schemaValidator from '../middleware/schemaValidator.js';
 import registrationSchema from '../validation-schemas/registrationSchema.js';
 import loginSchema from '../validation-schemas/loginSchema.js';
@@ -24,13 +24,13 @@ usersRouter.post(
     // Initialise the user's profile:
     const { username } = req.body;
 
-    const initProfileOutcome = await initUserProfile(registrationOutcome, {
-      username,
-    });
+    // const initProfileOutcome = await initUserProfile(registrationOutcome, {
+    //   username,
+    // });
 
-    if (initProfileOutcome.error) {
-      return res.json({ error: initProfileOutcome.error });
-    }
+    // if (initProfileOutcome.error) {
+    //   return res.json({ error: initProfileOutcome.error });
+    // }
 
     // Log the user in:
     const { email, password } = req.body;
