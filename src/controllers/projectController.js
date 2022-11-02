@@ -12,13 +12,11 @@ export async function createProject(projectDetails) {
   return savedProject;
 }
 
-export async function getAllProjects(currentUserId) {
+export async function getAllProjects(userId) {
   const projects = await Project.find({
-    $or: [{ createdBy: currentUserId }, { members: { userId: currentUserId } }],
+    $or: [{ createdBy: userId }, { members: { userId: userId } }],
   })
-    .populate('tasks')
-    .populate('members');
-
+   
   return projects;
 }
 

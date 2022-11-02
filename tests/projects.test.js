@@ -13,8 +13,7 @@ const newUserDetails = {
   password: 'johntest1234',
   firstName: 'John',
   lastName: 'Test',
-  username: 'johntester'
-
+  username: 'johntester',
 };
 let userRecord;
 let loginOutcome;
@@ -22,23 +21,22 @@ let loginOutcome;
 beforeAll(async () => {
   try {
     userRecord = await registerUser(newUserDetails);
-    loginOutcome = await loginUser(newUserDetails)
-    console.log(loginOutcome.idToken.token)
+    loginOutcome = await loginUser(newUserDetails);
   } catch (error) {
     console.log(error);
   }
 });
 
 afterAll(async () => {
-await admin
-  .auth()
-  .deleteUser(userRecord.uid)
-  .then(() => {
-    console.log('Successfully deleted user');
-  })
-  .catch((error) => {
-    console.log('Error deleting user:', error);
-  });
+  await admin
+    .auth()
+    .deleteUser(userRecord.uid)
+    .then(() => {
+      console.log('Successfully deleted user');
+    })
+    .catch((error) => {
+      console.log('Error deleting user:', error);
+    });
 });
 
 // set up before-tests and after-tests operations
@@ -54,24 +52,36 @@ describe('Projects', () => {
   it('creates a project', async () => {
     const response = await request(app)
       .post('/api/projects')
-      .set("Authorization", "Bearer " + loginOutcome.idToken.token)
+      .set('Authorization', `Bearer ${loginOutcome.idToken.token}`)
       .send({
         name: 'A new project',
         description: 'This is a test project',
-        createdBy: 'John Smith',
+        createdBy: userRecord.uid,
       });
-     
-     
     expect(response.statusCode).toEqual(201);
     const project = response.body;
     expect(project.name).toEqual('A new project');
     expect(project.description).toEqual('This is a test project');
-    expect(project.createdBy).toEqual('John Smith');
+    expect(project.createdBy).toEqual(userRecord.uid);
     expect(project.tasks).toEqual([]);
     expect(project.members).toEqual([]);
   });
 
   it('Retrieves all projects', async () => {
-    const response = await request(app).get('/projects');
+    const response = await request(app)
+      .get('/api/projects')
+      .set('Authorization', `Bearer ${loginOutcome.idToken.token}`);
+    expect(response.statusCode).toEqual(200);
+    const project = response.body[0];
+    expect(project.createdBy).toEqual(userRecord.uid);
+    expect(project.name).toEqual('A new project');
   });
+  it('Fails to get all projects without a token', async () => {
+    const response = await request(app).get('/api/projects');
+    expect(response.statusCode).toEqual(401);
+    expect(response.error.message).toEqual('cannot GET /api/projects (401)');
+  });
+  it('Retrieves a single project by id', async () => {});
+  it('Deletes a single project', async () => {});
+  it('Updates a single project', async () => {});
 });
