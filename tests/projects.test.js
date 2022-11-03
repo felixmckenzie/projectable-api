@@ -95,7 +95,9 @@ describe('Projects', () => {
     expect(project.description).toEqual('This is a test project');
   });
 
-  it('Updates a single project', async () => {});
+  it('Updates a single project', async () => {
+    const response = await request(app).put
+  });
 
   it('Deletes a single project', async () => {
     const response = await request(app)

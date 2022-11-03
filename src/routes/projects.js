@@ -5,6 +5,7 @@ import {
   getAllProjects,
   getOneProject,
   removeOneProject,
+  updateProject,
 } from '../controllers/projectController.js';
 
 const projectsRouter = Router();
@@ -41,6 +42,22 @@ projectsRouter.get('/:projectId', async (req, res) => {
     res.status(200).json(project);
   } catch (error) {
     logger.info(error.message);
+    res.status(400).end();
+  }
+});
+
+projectsRouter.put('/:projectId', async (req, res) => {
+  try {
+    const updatedProject = await updateProject({
+      projectId: req.params.projectId,
+      name: req.body.name,
+      description: req.body.description,
+      tasks: req.body.tasks,
+      members: req.body.members,
+      createdBy: req.body.createdBy,
+    });
+    res.status(200).json(updateProject);
+  } catch (error) {
     res.status(400).end();
   }
 });

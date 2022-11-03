@@ -41,6 +41,21 @@ export async function getOneProject(projectId, userId) {
   }
 }
 
+export async function updateProject(projectDetails) {
+  try {
+    const updatedProject = await Project.findByIdAndUpdate(
+      {
+        _id: projectDetails._id,
+      },
+      projectDetails,
+      { new: true, upsert: true }
+    );
+    return updatedProject;
+  } catch (error) {
+    return { error: error.message };
+  }
+}
+
 export async function removeOneProject(projectId, userId) {
   try {
     const removed = await Project.findOneAndRemove({
