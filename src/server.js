@@ -5,7 +5,7 @@ import 'dotenv/config';
 import { databaseConnector } from './database.js';
 import logger from './config/logger.js';
 import admin from 'firebase-admin';
-import { checkIfAuthenticated } from './routes/usersHelpers.js';
+import { checkIfAuthenticated } from './controllers/usersHelpers.js';
 
 const app = express();
 
@@ -15,11 +15,11 @@ app.use(express.urlencoded({ extended: true }));
 
 admin.initializeApp({
   credential: admin.credential.cert({
-    "projectId": process.env.FIREBASE_ADMIN_PROJECT_ID,
-    "privateKey":process.env.FIREBASE_ADMIN_PRIVATE_KEY.replace(/\\n/g,'\n'),
-    'clientEmail':process.env.FIREBASE_ADMIN_CLIENT_EMAIL
-  })
-})
+    projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+    privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+  }),
+});
 
 // Connect to Database
 if (process.env.NODE_ENV !== 'test') {
@@ -33,16 +33,14 @@ if (process.env.NODE_ENV !== 'test') {
   }
 }
 
-
-
 // Users routes:
 app.use('/users', routes.usersRouter);
-//protected routes 
-app.use('/api', checkIfAuthenticated)
+//protected routes
+app.use('/api', checkIfAuthenticated);
 // Projects router:
 app.use('/api/projects', routes.projectsRouter);
 // Tasks router:
-app.use('/api/tasks', routes.tasksRouter);
+app.use('/api/projects/:projectId/tasks', routes.tasksRouter);
 // Comments router
 app.use('/api/comments', routes.commentsRouter);
 

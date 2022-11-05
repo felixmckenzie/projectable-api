@@ -49,14 +49,14 @@ projectsRouter.get('/:projectId', async (req, res) => {
 projectsRouter.put('/:projectId', async (req, res) => {
   try {
     const updatedProject = await updateProject({
-      projectId: req.params.projectId,
+      _id: req.params.projectId,
       name: req.body.name,
       description: req.body.description,
       tasks: req.body.tasks,
       members: req.body.members,
       createdBy: req.body.createdBy,
     });
-    res.status(200).json(updateProject);
+    res.status(200).json(updatedProject);
   } catch (error) {
     res.status(400).end();
   }

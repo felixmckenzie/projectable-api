@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { registerUser, loginUser } from './usersHelpers.js';
+import { registerUser, loginUser } from '../controllers/usersHelpers.js';
 import schemaValidator from '../middleware/schemaValidator.js';
 import registrationSchema from '../validation-schemas/registrationSchema.js';
 import loginSchema from '../validation-schemas/loginSchema.js';
@@ -13,9 +13,9 @@ usersRouter.post(
     // Register the user:
     const newUserDetails = {
       email: req.body.email,
-     password: req.body.password,
-     displayName: req.body.username
-    }
+      password: req.body.password,
+      displayName: req.body.username,
+    };
     const registrationOutcome = await registerUser(newUserDetails);
 
     if (registrationOutcome.error) {

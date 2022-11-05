@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import request from 'supertest';
 import app from '../src/server.js';
-import { registerUser, loginUser } from '../src/routes/usersHelpers.js';
+import { registerUser, loginUser } from '../src/controllers/usersHelpers.js';
 import admin from 'firebase-admin';
 import { databaseConnector, databaseDisconnector } from '../src/database.js';
 
@@ -96,14 +96,44 @@ describe('Projects', () => {
   });
 
   it('Updates a single project', async () => {
-    const response = await request(app).put
+    const response = await request(app)
+      .put(`/api/projects/${project._id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        name: 'A better name for the project',
+      });
+    expect(response.statusCode).toEqual(200);
+    project = response.body;
+    expect(project.name).toEqual('A better name for the project');
+    expect(project.description).toEqual('This is a test project');
   });
 
-  it('Deletes a single project', async () => {
+  // it('Deletes a single project', async () => {
+  //   const response = await request(app)
+  //     .delete(`/api/projects/${project._id}`)
+  //     .set('Authorization', `Bearer ${token}`);
+  //   expect(response.statusCode).toEqual(200);
+  //   expect(response.body._id).toEqual(project._id);
+  // });
+});
+
+describe('Tasks', () => {
+  it('Creates a task on a project', async () => {
     const response = await request(app)
-      .delete(`/api/projects/${project._id}`)
-      .set('Authorization', `Bearer ${token}`);
-    expect(response.statusCode).toEqual(200);
-    expect(response.body._id).toEqual(project._id);
+      .post(`/api/projects/${project._id}/tasks`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        brief: 'first task for test project',
+        description: 'created a task on existing project',
+      });
+    expect(response.statusCode).toEqual(201);
   });
+
+  it('Retrieves all tasks for a project', async () => {});
+
+  it('Retrieves a single project by ID', async () => {});
+
+  it('Updates a single project', async () => {});
+
+  it('Deletes a single project', async () => {});
 });
