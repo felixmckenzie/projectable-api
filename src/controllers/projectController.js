@@ -1,69 +1,82 @@
 import { Project } from '../models/ProjectSchema.js';
+import logger from '../config/logger.js';
 
-export async function createProject(projectDetails) {
+export async function createProject(req, res) {
   try {
     const newProject = new Project({
-      name: projectDetails.name,
-      description: projectDetails.description,
-      createdBy: projectDetails.createdBy,
+      name: req.body.name,
+      description: req.body.description,
+      createdBy: req.userId,
     });
     const savedProject = await newProject.save();
-    return savedProject;
+    return res.status(201).json(savedProject);
   } catch (error) {
-    return { error: error.message };
+    logger.info(error.message);
+    res.status(400).end();
   }
 }
 
-export async function getAllProjects(userId) {
+export async function getAllProjects(req, res) {
   try {
     const projects = await Project.find({
-      $or: [{ createdBy: userId }, { members: { userId: userId } }],
+      $or: [{ createdBy: req.userId }, { members: { userId: req.userId } }],
     });
 
-    return projects;
+    res.status(200).json(projects);
   } catch (error) {
-    return { error: error.message };
+    logger.info(error.message);
+    res.status(400).end();
   }
 }
 
-export async function getOneProject(projectId, userId) {
+export async function getOneProject(req, res) {
   try {
     const project = await Project.findOne({
-      _id: projectId,
-      createdBy: userId,
+      _id: req.params.projectId,
+      createdBy: req.userId,
     })
       .populate('tasks')
       .populate('members');
 
-    return project;
+    res.status(200).json(project);
   } catch (error) {
-    return { error: error.message };
+    logger.info(error.message);
+    res.status(400).end();
   }
 }
 
-export async function updateProject(projectDetails) {
+export async function updateProject(req, res) {
   try {
     const updatedProject = await Project.findByIdAndUpdate(
       {
-        _id: projectDetails._id,
+        _id: req.params.projectId,
       },
-      projectDetails,
+      {
+        _id: req.params.projectId,
+        name: req.body.name,
+        description: req.body.description,
+        tasks: req.body.tasks,
+        members: req.body.members,
+        createdBy: req.body.createdBy,
+      },
       { new: true, upsert: true }
     );
-    return updatedProject;
+    res.status(200).json(updatedProject);
   } catch (error) {
-    return { error: error.message };
+    logger.info(error.message);
+    res.status(400).end();
   }
 }
 
-export async function removeOneProject(projectId, userId) {
+export async function removeOneProject(req, res) {
   try {
     const removed = await Project.findOneAndRemove({
-      _id: projectId,
-      createdBy: userId,
+      _id: req.params.projectId,
+      createdBy: req.userId,
     });
-    return removed;
+    res.status(200).json(removed);
   } catch (error) {
-    return { error: error.message };
+    logger.info(error.message);
+    res.status(400).end();
   }
 }

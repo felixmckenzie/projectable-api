@@ -20,6 +20,7 @@ let userRecord;
 let loginOutcome;
 let token;
 let project;
+let task;
 
 beforeAll(async () => {
   try {
@@ -124,16 +125,32 @@ describe('Tasks', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         brief: 'first task for test project',
-        description: 'created a task on existing project',
+        description: 'created a task on test project',
       });
     expect(response.statusCode).toEqual(201);
+    task = response.body.task;
+    project = response.body.project;
+    expect(task.brief).toEqual('first task for test project');
+    expect(task.description).toEqual('created a task on test project');
+    expect(project.tasks[0]).toEqual(task._id);
   });
 
-  it('Retrieves all tasks for a project', async () => {});
+  it('Retrieves all tasks for a project', async () => {
+    const response = await request(app)
+      .get(`/api/projects/${project._id}/tasks`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.statusCode).toEqual(200);
+    expect(response.body).toBeInstanceOf(Array);
+  });
 
-  it('Retrieves a single project by ID', async () => {});
+  it('Retrieves a single task by ID', async () => {
+    const response = await request(app)
+      .get(`/api/projects/${project._id}/tasks/${task._id}`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.statusCode).toEqual(200);
+  });
 
-  it('Updates a single project', async () => {});
+  it('Updates a single task', async () => {});
 
   it('Deletes a single project', async () => {});
 });

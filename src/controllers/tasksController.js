@@ -1,9 +1,17 @@
 import { Task } from '../models/TaskSchema.js';
 import { Project } from '../models/ProjectSchema.js';
+import logger from '../config/logger.js';
 
-export async function createTask(taskDetails) {
+export async function createTask(req, res) {
   try {
+    const taskDetails = {
+      brief: req.body.brief,
+      description: req.body.description,
+      createdBy: req.userId,
+      projectId: req.params.projectId,
+    };
     const newTask = await Task.create(taskDetails);
+
     const projectToUpdate = await Project.findByIdAndUpdate(
       newTask.projectId,
       {
@@ -12,20 +20,48 @@ export async function createTask(taskDetails) {
       { new: true }
     );
 
-    if(!projectToUpdate){
-        throw new Error("Project to update not found")
+    if (!projectToUpdate) {
+      throw new Error('Project to update not found');
     }
 
-    return newTask;
+    res.status(201).json({ task: newTask, project: projectToUpdate });
   } catch (error) {
-    return {error: error.message}
+    logger.info(error.message);
+    res.status(400).end();
   }
 }
 
-export async function getAllTasks(userId) {}
+export async function getAllTasks(req, res) {
+  try {
+    const tasks = await Task.find({
+      createdBy: req.userId,
+    })
+      .lean()
+      .exec();
 
-export async function getOneTask() {}
+    res.status(200).json(tasks);
+  } catch (error) {
+    logger.info(error.messge);
+    res.status(400).end();
+  }
+}
 
-export async function updateTask() {}
+export async function getOneTask(req, res) {
+  try {
+    const task = await Task.findById(req.params.taskId);
+    res.status(200).json(task);
+  } catch (error) {
+    logger.info(error.message);
+    res.status(400).end();
+  }
+}
+
+export async function updateTask(req, res) {
+    try{
+
+    }catch(error){
+        
+    }
+}
 
 export async function deleteOneTask() {}
