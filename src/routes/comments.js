@@ -8,10 +8,10 @@ import {
 } from '../controllers/commentsController.js';
 const commentsRouter = Router({ mergeParams: true });
 
-commentsRouter.get('/');
-commentsRouter.post('/');
-commentsRouter.get('/:commentId');
-commentsRouter.put('/:commentId');
-commentsRouter.delete('/:commentId');
+commentsRouter.get('/', getAllComments);
+commentsRouter.post('/', createComment);
+commentsRouter.get('/:commentId', getOneComment);
+commentsRouter.put('/:commentId', updateComment);
+commentsRouter.delete('/:commentId', deleteComment);
 
 export default commentsRouter;

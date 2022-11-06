@@ -7,11 +7,11 @@ export async function createComment(req, res) {
     const newComment = await Comment.create({
       content: req.body.content,
       task: req.params.taskId,
-      userId: req.userId,
+      createdBy: req.userId,
     });
 
     const taskToUpdate = await Task.findByIdAndUpdate(
-      { _id: newComment.projectId },
+      { _id: newComment.task },
       {
         $push: { comments: newComment },
       },
@@ -56,10 +56,10 @@ export async function updateComment(req, res) {
   try {
     const commentToUpdate = await Comment.findByIdAndUpdate(
       { _id: req.params.commentId },
-      ...req.body,
+     { ...req.body},
       { new: true }
     );
-    res.status(200).json(commentToUpdate)
+    res.status(200).json(commentToUpdate);
   } catch (error) {
     logger.info(error.message);
     res.status(400).end();
@@ -68,8 +68,10 @@ export async function updateComment(req, res) {
 
 export async function deleteComment(req, res) {
   try {
-    const removed = await Comment.findOneAndRemove({_id: req.params.commentId})
-    res.status(200).json(removed)
+    const removed = await Comment.findOneAndRemove({
+      _id: req.params.commentId,
+    });
+    res.status(200).json(removed);
   } catch (error) {
     logger.info(error.message);
     res.status(400).end();

@@ -21,6 +21,7 @@ let loginOutcome;
 let token;
 let project;
 let task;
+let comment;
 
 beforeAll(async () => {
   try {
@@ -166,18 +167,52 @@ describe('Get, Create and Update Tasks', () => {
     expect(task.description).toEqual('Updated description for task');
   });
 
-  it('Deletes a single project', async () => {});
+  it('Deletes a single task', async () => {});
 });
 
 describe('Get, Create and Update Comments', () => {
-  
-  it('Creates a comment on a task', async () => {});
+  it('Creates a comment on a task', async () => {
+    const response = await request(app)
+      .post(`/api/projects/${project._id}/tasks/${task._id}/comments`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        content: 'test comment',
+      });
+    comment = response.body;
+    expect(response.statusCode).toEqual(201);
+    expect(comment.content).toEqual('test comment');
+    expect(comment.task).toEqual(task._id);
+    expect(comment.createdBy).toEqual(userRecord.uid);
+  });
 
-  it('Gets all comments on a task', async () => {});
+  it('Gets all comments on a task', async () => {
+    const response = await request(app)
+      .get(`/api/projects/${project._id}/tasks/${task._id}/comments`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.statusCode).toEqual(200);
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body[0].content).toEqual('test comment');
+    expect(response.body[0].task).toEqual(task._id);
+  });
 
-  it('Gets a single comment', async () => {});
+  it('Gets a single comment', async () => {
+    const response = await request(app)
+      .get(
+        `/api/projects/${project._id}/tasks/${task._id}/comments/${comment._id}`
+      )
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.statusCode).toEqual(200);
+    expect(response.body.content).toEqual('test comment');
+  });
 
-  it('Updates a single comment', async () => {});
-
-
+  it('Updates a single comment', async () => {
+    const response = await request(app)
+      .put(
+        `/api/projects/${project._id}/tasks/${task._id}/comments/${comment._id}`
+      )
+      .set('Authorization', `Bearer ${token}`)
+      .send({ content: 'updated content for test comment' });
+    expect(response.statusCode).toEqual(200);
+    expect(response.body.content).toEqual('updated content for test comment');
+  });
 });

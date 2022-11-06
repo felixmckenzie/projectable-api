@@ -40,7 +40,7 @@ app.use('/api', checkIfAuthenticated);
 // Projects router:
 app.use('/api/projects', routes.projectsRouter);
 // Tasks router:
-app.use('/api/projects/:projectId/tasks', routes.tasksRouter);
+app.use('/api/tasks', routes.tasksRouter);
 // Comments router
 app.use('/api/comments', routes.commentsRouter);
 

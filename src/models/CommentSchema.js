@@ -10,7 +10,7 @@ const commentSchema = new Schema(
       type: Schema.Types.ObjectId,
       required: true,
     },
-    userId: {
+    createdBy: {
       type: String,
       required: true,
     },

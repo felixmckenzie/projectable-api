@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import tasksRouter from './tasks.js';
 import {
   createProject,
   getAllProjects,
@@ -18,5 +19,7 @@ projectsRouter.get('/:projectId', getOneProject);
 projectsRouter.put('/:projectId', updateProject);
 
 projectsRouter.delete('/:projectId', removeOneProject);
+
+projectsRouter.use('/:projectId/tasks', tasksRouter)
 
 export default projectsRouter;
