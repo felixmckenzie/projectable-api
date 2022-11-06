@@ -1,6 +1,6 @@
 import { Comment } from '../models/CommentSchema.js';
 import { Task } from '../models/TaskSchema.js';
-import logger from '../config/logger';
+import logger from '../config/logger.js';
 
 export async function createComment(req, res) {
   try {
