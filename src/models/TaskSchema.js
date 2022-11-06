@@ -24,6 +24,12 @@ const taskSchema = new Schema(
       ref: 'project',
       required: true,
     },
+    comments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'comments',
+      },
+    ],
   },
   { timestamps: true }
 );

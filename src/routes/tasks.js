@@ -1,9 +1,12 @@
 import { Router } from 'express';
+import commentsRouter from './comments.js';
 import {
   createTask,
   getAllTasks,
   getOneTask,
-} from '../controllers/tasksController';
+  updateTask,
+  deleteOneTask,
+} from '../controllers/tasksController.js';
 const tasksRouter = Router({ mergeParams: true });
 
 tasksRouter.get('/', getAllTasks);
@@ -12,8 +15,10 @@ tasksRouter.post('/', createTask);
 
 tasksRouter.get('/:taskId', getOneTask);
 
-tasksRouter.put('/:taskId');
+tasksRouter.put('/:taskId', updateTask);
 
-tasksRouter.delete('/:taskId');
+tasksRouter.delete('/:taskId', deleteOneTask);
+
+tasksRouter.use('/:taskId/comments', commentsRouter);
 
 export default tasksRouter;

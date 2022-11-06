@@ -53,7 +53,7 @@ afterEach(async () => {
   await databaseDisconnector();
 });
 
-describe('Projects', () => {
+describe('Get, Create and Update Projects', () => {
   it('creates a project', async () => {
     const response = await request(app)
       .post('/api/projects')
@@ -118,7 +118,7 @@ describe('Projects', () => {
   // });
 });
 
-describe('Tasks', () => {
+describe('Get, Create and Update Tasks', () => {
   it('Creates a task on a project', async () => {
     const response = await request(app)
       .post(`/api/projects/${project._id}/tasks`)
@@ -150,7 +150,34 @@ describe('Tasks', () => {
     expect(response.statusCode).toEqual(200);
   });
 
-  it('Updates a single task', async () => {});
+  it('Updates a single task', async () => {
+    const response = await request(app)
+      .put(`/api/projects/${project._id}/tasks/${task._id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        brief: 'Updated name for task',
+        description: 'Updated description for task',
+        deadline: new Date('2022-12-17').toString(),
+      });
+    expect(response.statusCode).toEqual(200);
+    task = response.body;
+    console.log(task.deadline);
+    expect(task.brief).toEqual('Updated name for task');
+    expect(task.description).toEqual('Updated description for task');
+  });
 
   it('Deletes a single project', async () => {});
+});
+
+describe('Get, Create and Update Comments', () => {
+  
+  it('Creates a comment on a task', async () => {});
+
+  it('Gets all comments on a task', async () => {});
+
+  it('Gets a single comment', async () => {});
+
+  it('Updates a single comment', async () => {});
+
+
 });

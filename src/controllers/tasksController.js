@@ -57,11 +57,32 @@ export async function getOneTask(req, res) {
 }
 
 export async function updateTask(req, res) {
-    try{
-
-    }catch(error){
-        
-    }
+  try {
+    const taskToUpdate = await Task.findByIdAndUpdate(
+      {
+        _id: req.params.taskId,
+      },
+      {
+        ...req.body,
+      },
+      { new: true, upsert: true }
+    );
+    res.status(200).json(taskToUpdate);
+  } catch (error) {
+    logger.info(error.message);
+    res.status(400).end();
+  }
 }
 
-export async function deleteOneTask() {}
+export async function deleteOneTask(req, res) {
+  try {
+    const removed = await Task.findOneAndRemove({
+      _id: req.params.taskId,
+    });
+
+    res.status(200).json(removed)
+  } catch (error) {
+    logger.info(error.message);
+    res.status(400).end();
+  }
+}

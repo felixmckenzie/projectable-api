@@ -52,12 +52,7 @@ export async function updateProject(req, res) {
         _id: req.params.projectId,
       },
       {
-        _id: req.params.projectId,
-        name: req.body.name,
-        description: req.body.description,
-        tasks: req.body.tasks,
-        members: req.body.members,
-        createdBy: req.body.createdBy,
+        ...req.body,
       },
       { new: true, upsert: true }
     );
