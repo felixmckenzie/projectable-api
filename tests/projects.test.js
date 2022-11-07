@@ -73,20 +73,17 @@ describe('Get, Create and Update Projects', () => {
     expect(project.members).toEqual([]);
   });
 
-  it('Retrieves all projects', async () => {
+  it('Retrieves all projects for a user', async () => {
     const response = await request(app)
       .get('/api/projects')
       .set('Authorization', `Bearer ${token}`);
     expect(response.statusCode).toEqual(200);
+    expect(response.body).toBeInstanceOf(Array);
     const project = response.body[0];
     expect(project.createdBy).toEqual(userRecord.uid);
     expect(project.name).toEqual('A new project');
   });
-  it('Fails to get all projects without a token', async () => {
-    const response = await request(app).get('/api/projects');
-    expect(response.statusCode).toEqual(401);
-    expect(response.error.message).toEqual('cannot GET /api/projects (401)');
-  });
+
   it('Retrieves a single project by id', async () => {
     const response = await request(app)
       .get(`/api/projects/${project._id}`)
@@ -131,14 +128,41 @@ describe('Get, Create and Update Projects', () => {
       });
     expect(response.statusCode).toEqual(200);
   });
+});
 
-  // it('Deletes a single project', async () => {
-  //   const response = await request(app)
-  //     .delete(`/api/projects/${project._id}`)
-  //     .set('Authorization', `Bearer ${token}`);
-  //   expect(response.statusCode).toEqual(200);
-  //   expect(response.body._id).toEqual(project._id);
-  // });
+describe('Error scenarios for project routes', () => {
+  it('Fails to retrieve all projects without a token', async () => {
+    const response = await request(app).get('/api/projects');
+    expect(response.statusCode).toEqual(401);
+    expect(response.error.message).toEqual('cannot GET /api/projects (401)');
+  });
+
+  it('Fails to retrieve a single project with an invalid project Id', async () => {
+    const response = await request(app)
+      .get(`/api/projects/ggegg45445ffggfe5`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it('fails to create a project without required values', async () => {
+    const response = await request(app)
+      .post('/api/projects')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        name: 'A failed test project',
+      });
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it('fails to update a project with invalid project id', async () => {
+    const response = await request(app)
+      .put(`/api/projects/fifbfuwfi480485u0-`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        name: 'A better name for the project',
+      });
+    expect(response.statusCode).toEqual(400);
+  });
 });
 
 describe('Get, Create and Update Tasks', () => {
@@ -238,4 +262,28 @@ describe('Get, Create and Update Comments', () => {
   });
 });
 
-describe('Delete Projects, Tasks and Comments', () => {});
+describe('Delete Projects, Tasks and Comments', () => {
+  it('Deletes a single comment', async () => {
+    const response = await request(app)
+      .delete(
+        `/api/projects/${project._id}/tasks/${task._id}/comments/${comment._id}`
+      )
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.statusCode).toEqual(200);
+  });
+
+  it('Deletes a single task', async () => {
+    const response = await request(app)
+      .delete(`/api/projects/${project._id}/tasks/${task._id}`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.statusCode).toEqual(200);
+  });
+
+  it('Deletes a single project', async () => {
+    const response = await request(app)
+      .delete(`/api/projects/${project._id}`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.statusCode).toEqual(200);
+    expect(response.body._id).toEqual(project._id);
+  });
+});

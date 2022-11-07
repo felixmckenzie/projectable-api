@@ -37,7 +37,6 @@ export async function getOneProject(req, res) {
     })
       .populate('tasks')
       .populate('members');
-
     res.status(200).json(project);
   } catch (error) {
     logger.info(error.message);
