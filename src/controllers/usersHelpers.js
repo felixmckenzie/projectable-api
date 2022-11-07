@@ -1,11 +1,8 @@
 import admin from 'firebase-admin';
 import { initializeApp } from 'firebase/app';
 import { firebaseClientConfig } from '../config/firebaseClientKey.js';
-import {
-  getAuth,
-  updateProfile,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
+import logger from '../config/logger.js';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 // Initialize the Firebase Client SDK
 initializeApp(firebaseClientConfig);
@@ -65,17 +62,13 @@ export async function checkIfAuthenticated(req, res, next) {
   }
 }
 
-// export async function initUserProfile(user, profileInfo) {
-//   const { username } = profileInfo;
-//   return updateProfile(user, {
-//     displayName: username,
-//   })
-//     .then(() => {
-//       return {};
-//     })
-//     .catch((error) => {
-//       return {
-//         error: error.message,
-//       };
-//     });
-// }
+export async function getUserByEmail(req, res) {
+  try {
+    const email = req.query;
+    const userRecord = await admin.auth().getUserByEmail(email);
+    res.status(200).json(userRecord);
+  } catch (error) {
+    logger.info(error.message);
+    res.status(400).end();
+  }
+}

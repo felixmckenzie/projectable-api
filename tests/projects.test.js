@@ -28,6 +28,7 @@ beforeAll(async () => {
     userRecord = await registerUser(newUserDetails);
     loginOutcome = await loginUser(newUserDetails);
     token = loginOutcome.idToken.token;
+    console.log(userRecord)
   } catch (error) {
     console.log(error);
   }
@@ -214,5 +215,6 @@ describe('Get, Create and Update Comments', () => {
       .send({ content: 'updated content for test comment' });
     expect(response.statusCode).toEqual(200);
     expect(response.body.content).toEqual('updated content for test comment');
+  
   });
 });

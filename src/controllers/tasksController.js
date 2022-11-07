@@ -13,7 +13,7 @@ export async function createTask(req, res) {
     const newTask = await Task.create(taskDetails);
 
     const projectToUpdate = await Project.findByIdAndUpdate(
-      newTask.projectId,
+     {_id: newTask.projectId},
       {
         $push: { tasks: newTask },
       },

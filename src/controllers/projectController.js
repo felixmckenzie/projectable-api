@@ -63,6 +63,22 @@ export async function updateProject(req, res) {
   }
 }
 
+export async function addMember(req, res) {
+  try {
+    const updatedProject = await Project.findByIdAndUpdate(
+      { _id: req.params.projectId },
+      {
+        $push: { members: req.body.member },
+      },
+      { new: true }
+    );
+    res.status(200).json(updatedProject);
+  } catch (error) {
+    logger.info(error.message);
+    res.status(400).end();
+  }
+}
+
 export async function removeOneProject(req, res) {
   try {
     const removed = await Project.findOneAndRemove({
