@@ -65,10 +65,11 @@ export async function updateProject(req, res) {
 
 export async function addMember(req, res) {
   try {
+    const member = req.body;
     const updatedProject = await Project.findByIdAndUpdate(
       { _id: req.params.projectId },
       {
-        $push: { members: req.body.member },
+        $push: { members: member },
       },
       { new: true }
     );

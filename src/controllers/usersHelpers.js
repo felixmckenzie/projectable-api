@@ -14,7 +14,7 @@ export async function registerUser(userDetails) {
       emailVerified: true,
       password: userDetails.password,
       disabled: false,
-      displayName: userDetails.displayName,
+      displayName: userDetails.username,
     });
 
     return userRecord;
@@ -64,7 +64,7 @@ export async function checkIfAuthenticated(req, res, next) {
 
 export async function getUserByEmail(req, res) {
   try {
-    const email = req.query;
+    const email = req.query.email;
     const userRecord = await admin.auth().getUserByEmail(email);
     res.status(200).json(userRecord);
   } catch (error) {

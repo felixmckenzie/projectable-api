@@ -9,7 +9,6 @@ import {
   updateProject,
   addMember,
 } from '../controllers/projectController.js';
-import { add } from 'winston';
 
 const projectsRouter = Router();
 

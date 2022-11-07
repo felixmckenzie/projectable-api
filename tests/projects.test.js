@@ -28,7 +28,6 @@ beforeAll(async () => {
     userRecord = await registerUser(newUserDetails);
     loginOutcome = await loginUser(newUserDetails);
     token = loginOutcome.idToken.token;
-    console.log(userRecord)
   } catch (error) {
     console.log(error);
   }
@@ -111,6 +110,28 @@ describe('Get, Create and Update Projects', () => {
     expect(project.description).toEqual('This is a test project');
   });
 
+  it('Searches for a user using email address', async () => {
+    const response = await request(app)
+      .get(`/api/projects/${project._id}/members/search`)
+      .query({ email: 'john_test_user@mail.com' })
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.statusCode).toEqual(200);
+    expect(response.body.uid).toEqual(userRecord.uid);
+    expect(response.body.email).toEqual('john_test_user@mail.com');
+  });
+
+  it('Adds a user to project members', async () => {
+    const response = await request(app)
+      .put(`/api/projects/${project._id}/members/new`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        username: userRecord.displayName,
+        email: userRecord.email,
+        userId: userRecord.uid,
+      });
+    expect(response.statusCode).toEqual(200);
+  });
+
   // it('Deletes a single project', async () => {
   //   const response = await request(app)
   //     .delete(`/api/projects/${project._id}`)
@@ -163,7 +184,6 @@ describe('Get, Create and Update Tasks', () => {
       });
     expect(response.statusCode).toEqual(200);
     task = response.body;
-    console.log(task.deadline);
     expect(task.brief).toEqual('Updated name for task');
     expect(task.description).toEqual('Updated description for task');
   });
@@ -215,6 +235,7 @@ describe('Get, Create and Update Comments', () => {
       .send({ content: 'updated content for test comment' });
     expect(response.statusCode).toEqual(200);
     expect(response.body.content).toEqual('updated content for test comment');
-  
   });
 });
+
+describe('Delete Projects, Tasks and Comments', () => {});
