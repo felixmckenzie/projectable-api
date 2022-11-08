@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import tasksRouter from './tasks.js';
+import { getUserByEmail } from '../controllers/usersHelpers.js';
 import {
   createProject,
   getAllProjects,
   getOneProject,
   removeOneProject,
   updateProject,
+  addMember,
 } from '../controllers/projectController.js';
 
 const projectsRouter = Router();
@@ -16,10 +18,14 @@ projectsRouter.post('/', createProject);
 
 projectsRouter.get('/:projectId', getOneProject);
 
+projectsRouter.get('/:projectId/members/search', getUserByEmail);
+
+projectsRouter.put('/:projectId/members/new', addMember);
+
 projectsRouter.put('/:projectId', updateProject);
 
 projectsRouter.delete('/:projectId', removeOneProject);
 
-projectsRouter.use('/:projectId/tasks', tasksRouter)
+projectsRouter.use('/:projectId/tasks', tasksRouter);
 
 export default projectsRouter;

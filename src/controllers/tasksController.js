@@ -13,7 +13,7 @@ export async function createTask(req, res) {
     const newTask = await Task.create(taskDetails);
 
     const projectToUpdate = await Project.findByIdAndUpdate(
-      newTask.projectId,
+     {_id: newTask.projectId},
       {
         $push: { tasks: newTask },
       },
@@ -34,7 +34,7 @@ export async function createTask(req, res) {
 export async function getAllTasks(req, res) {
   try {
     const tasks = await Task.find({
-      createdBy: req.userId,
+      projectId: req.params.projectId,
     })
       .lean()
       .exec();

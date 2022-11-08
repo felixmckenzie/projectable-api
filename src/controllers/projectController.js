@@ -33,11 +33,10 @@ export async function getOneProject(req, res) {
   try {
     const project = await Project.findOne({
       _id: req.params.projectId,
-      createdBy: req.userId,
+      $or: [{ createdBy: req.userId }, { members: { userId: req.userId } }],
     })
       .populate('tasks')
       .populate('members');
-
     res.status(200).json(project);
   } catch (error) {
     logger.info(error.message);
@@ -55,6 +54,23 @@ export async function updateProject(req, res) {
         ...req.body,
       },
       { new: true, upsert: true }
+    );
+    res.status(200).json(updatedProject);
+  } catch (error) {
+    logger.info(error.message);
+    res.status(400).end();
+  }
+}
+
+export async function addMember(req, res) {
+  try {
+    const member = req.body;
+    const updatedProject = await Project.findByIdAndUpdate(
+      { _id: req.params.projectId },
+      {
+        $push: { members: member },
+      },
+      { new: true }
     );
     res.status(200).json(updatedProject);
   } catch (error) {
