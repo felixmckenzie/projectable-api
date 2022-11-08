@@ -11,26 +11,30 @@ usersRouter.post(
   schemaValidator(registrationSchema),
   async (req, res) => {
     // Register the user:
-    const newUserDetails = {
-      email: req.body.email,
-      password: req.body.password,
-      displayName: req.body.username,
-    };
-    const registrationOutcome = await registerUser(newUserDetails);
+    try {
+      const newUserDetails = {
+        email: req.body.email,
+        password: req.body.password,
+        displayName: req.body.username,
+      };
+      const registrationOutcome = await registerUser(newUserDetails);
 
-    if (registrationOutcome.error) {
-      console.log(registrationOutcome);
-      return res.json({ error: registrationOutcome.error });
+      if (registrationOutcome.error) {
+        console.log(registrationOutcome);
+        return res.json({ error: registrationOutcome.error });
+      }
+
+      // Log the user in:
+      const loginOutcome = await loginUser(newUserDetails);
+
+      if (loginOutcome.error) {
+        return res.json({ error: loginOutcome.error });
+      }
+
+      res.status(200).json(registrationOutcome);
+    } catch (error) {
+      res.status(400).end();
     }
-
-    // Log the user in:
-    // const loginOutcome = await loginUser(newUserDetails);
-
-    // if (loginOutcome.error) {
-    //   return res.json({ error: loginOutcome.error });
-    // }
-
-    res.json(registrationOutcome);
   }
 );
 
