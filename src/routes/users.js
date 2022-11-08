@@ -31,7 +31,7 @@ usersRouter.post(
         return res.json({ error: loginOutcome.error });
       }
 
-      res.status(200).json(registrationOutcome);
+      res.status(200).json(loginOutcome);
     } catch (error) {
       res.status(400).end();
     }
