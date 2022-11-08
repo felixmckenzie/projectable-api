@@ -33,7 +33,7 @@ export async function getOneProject(req, res) {
   try {
     const project = await Project.findOne({
       _id: req.params.projectId,
-      createdBy: req.userId,
+      $or: [{ createdBy: req.userId }, { members: { userId: req.userId } }],
     })
       .populate('tasks')
       .populate('members');
