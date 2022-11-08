@@ -9,4 +9,4 @@ const registrationSchema = Joi.object({
   lastName: Joi.string().required(),
 });
 
-export default registrationSchema;
+export default registrationSchema; 
