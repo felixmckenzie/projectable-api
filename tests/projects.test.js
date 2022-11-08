@@ -27,7 +27,8 @@ beforeAll(async () => {
   try {
     userRecord = await registerUser(newUserDetails);
     loginOutcome = await loginUser(newUserDetails);
-    token = loginOutcome.idToken.token;
+    token = loginOutcome.token;
+    console.log(token)
   } catch (error) {
     console.log(error);
   }

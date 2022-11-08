@@ -33,7 +33,7 @@ export async function loginUser(userDetails) {
     );
     let userIdToken = await clientAuth.currentUser.getIdTokenResult(false);
     return {
-      idToken: userIdToken,
+      token: userIdToken.token,
       refreshToken: userCredential.user.refreshToken,
       email: userCredential.user.email,
       emailVerified: userCredential.user.emailVerified,
