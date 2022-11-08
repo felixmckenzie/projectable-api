@@ -215,6 +215,56 @@ describe('Get, Create and Update Tasks', () => {
   it('Deletes a single task', async () => {});
 });
 
+describe('Error scenarios for task routes', () => {
+  it('Fails to retrieve all tasks without a token', async () => {
+    const response = await request(app).get(
+      `/api/projects/${project._id}/tasks`
+    );
+    expect(response.statusCode).toEqual(401);
+  });
+
+  it('Fails to retrieve a single task with an invalid task Id', async () => {
+    const response = await request(app)
+      .get(`/api/projects/${project._id}/tasks/ggegg45445ffggfe5`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it('fails to create a task without required values', async () => {
+    const response = await request(app)
+      .post(`/api/projects/${project._id}/tasks`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        brief: 'This should fail',
+      });
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it('fails to create a task with an invalid project id ', async () => {
+    const response = await request(app)
+      .post(`/api/projects/39034093448n/tasks`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        brief: 'Failed task creation',
+        description: 'Invalid project id'
+      });
+      expect(response.statusCode).toEqual(400)
+      expect(response.error.message).toEqual(
+        'cannot POST /api/projects/39034093448n/tasks (400)'
+      );
+  });
+
+  it('fails to update a task with invalid task id', async () => {
+    const response = await request(app)
+      .put(`/api/projects/${project._id}/tasks/fifbfuwfi480485u0-`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        name: 'A better name for the project',
+      });
+    expect(response.statusCode).toEqual(400);
+  });
+});
+
 describe('Get, Create and Update Comments', () => {
   it('Creates a comment on a task', async () => {
     const response = await request(app)
@@ -259,6 +309,44 @@ describe('Get, Create and Update Comments', () => {
       .send({ content: 'updated content for test comment' });
     expect(response.statusCode).toEqual(200);
     expect(response.body.content).toEqual('updated content for test comment');
+  });
+});
+
+describe('Error scenarios for comment routes', () => {
+  it('Fails to retrieve all comments without a token', async () => {
+    const response = await request(app).get(
+      `/api/projects/${project._id}/tasks/${task._id}/comments`
+    );
+    expect(response.statusCode).toEqual(401);
+  });
+
+  it('Fails to retrieve a single comment with an invalid comment Id', async () => {
+    const response = await request(app)
+      .get(
+        `/api/projects/${project._id}/tasks/${task._id}/comments/jjebeigb9349h9`
+      )
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it('fails to create a comment without required values', async () => {
+    const response = await request(app)
+      .post(`/api/projects/${project._id}/tasks/${task._id}/comments`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({});
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it('fails to update a commment with invalid comment id', async () => {
+    const response = await request(app)
+      .put(
+        `/api/projects/${project._id}/tasks/${task._id}/comments/jjebeigb9349h9`
+      )
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        name: 'A better name for the project',
+      });
+    expect(response.statusCode).toEqual(400);
   });
 });
 
