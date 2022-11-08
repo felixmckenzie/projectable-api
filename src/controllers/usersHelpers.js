@@ -24,13 +24,16 @@ export async function registerUser(userDetails) {
 }
 
 export async function loginUser(userDetails) {
+  
   const clientAuth = getAuth();
-  let signInResult = signInWithEmailAndPassword(
-    clientAuth,
-    userDetails.email,
-    userDetails.password
-  ).then(async (userCredential) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      clientAuth,
+      userDetails.email,
+      userDetails.password
+    );
     let userIdToken = await clientAuth.currentUser.getIdTokenResult(false);
+
     return {
       token: userIdToken.token,
       refreshToken: userCredential.user.refreshToken,
@@ -40,31 +43,9 @@ export async function loginUser(userDetails) {
       photoURL: userCredential.user.photoURL,
       uid: userCredential.user.uid,
     };
-  }).catch(error =>{
-    return {error: error}
-  });
-  return signInResult
-  // const clientAuth = getAuth();
-  // try {
-  //   const userCredential = await signInWithEmailAndPassword(
-  //     clientAuth,
-  //     userDetails.email,
-  //     userDetails.password
-  //   );
-  //   let userIdToken = await clientAuth.currentUser.getIdTokenResult(false);
-
-  //   return {
-  //     token: userIdToken.token,
-  //     refreshToken: userCredential.user.refreshToken,
-  //     email: userCredential.user.email,
-  //     emailVerified: userCredential.user.emailVerified,
-  //     displayName: userCredential.user.displayName,
-  //     photoURL: userCredential.user.photoURL,
-  //     uid: userCredential.user.uid,
-  //   };
-  // } catch (error) {
-  //   return { error: error.message };
-  // }
+  } catch (error) {
+    return { error: error.message };
+  }
 }
 
 export async function checkIfAuthenticated(req, res, next) {
