@@ -23,25 +23,14 @@ usersRouter.post(
       return res.json({ error: registrationOutcome.error });
     }
 
-    // Initialise the user's profile:
-    // const { username } = req.body;
+    // Log the user in:
+    // const loginOutcome = await loginUser(newUserDetails);
 
-    // const initProfileOutcome = await initUserProfile(registrationOutcome, {
-    //   username,
-    // });
-
-    // if (initProfileOutcome.error) {
-    //   return res.json({ error: initProfileOutcome.error });
+    // if (loginOutcome.error) {
+    //   return res.json({ error: loginOutcome.error });
     // }
 
-    // Log the user in:
-    const loginOutcome = await loginUser(newUserDetails);
-
-    if (loginOutcome.error) {
-      return res.json({ error: loginOutcome.error });
-    }
-
-    res.json(loginOutcome);
+    res.json(registrationOutcome);
   }
 );
 
