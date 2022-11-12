@@ -24,7 +24,6 @@ export async function registerUser(userDetails) {
 }
 
 export async function loginUser(userDetails) {
-  
   const clientAuth = getAuth();
   try {
     const userCredential = await signInWithEmailAndPassword(
@@ -33,7 +32,6 @@ export async function loginUser(userDetails) {
       userDetails.password
     );
     let userIdToken = await clientAuth.currentUser.getIdTokenResult(false);
-
     return {
       token: userIdToken.token,
       refreshToken: userCredential.user.refreshToken,
@@ -57,7 +55,7 @@ export async function checkIfAuthenticated(req, res, next) {
   const token = bearer.split(' ')[1].trim();
   try {
     const user = await admin.auth().verifyIdToken(token);
-    req.userId = user.uid;
+    req.user = { uid: user.uid, username: user.name };
     next();
   } catch (error) {
     return res.status(401).json({ error: error });

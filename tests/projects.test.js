@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import request from 'supertest';
 import app from '../src/server.js';
 import { registerUser, loginUser } from '../src/controllers/usersHelpers.js';
@@ -9,11 +8,11 @@ const DATABASE_URI =
   process.env.DATABASE_URI || 'mongodb://localhost:27017/projectable-tests';
 
 const newUserDetails = {
-  email: 'john_test_user@mail.com',
-  password: 'johntest1234',
-  firstName: 'John',
-  lastName: 'Test',
-  username: 'johntester',
+  email: 'test_User33@testmail.com',
+  password: 'TestUser33',
+  firstName: 'NewUserFirstName',
+  lastName: 'NewUserLastName',
+  username: 'TestUsername',
 };
 
 let userRecord;
@@ -54,6 +53,11 @@ afterEach(async () => {
   await databaseDisconnector();
 });
 
+
+describe('Register User and Login Them In', ()=>{
+  
+})
+
 describe('Get, Create and Update Projects', () => {
   it('creates a project', async () => {
     const response = await request(app)
@@ -62,13 +66,14 @@ describe('Get, Create and Update Projects', () => {
       .send({
         name: 'A new project',
         description: 'This is a test project',
-        createdBy: userRecord.uid,
+        createdBy: userRecord.displayName,
+        userId: userRecord.uid
       });
     expect(response.statusCode).toEqual(201);
     project = response.body;
     expect(project.name).toEqual('A new project');
     expect(project.description).toEqual('This is a test project');
-    expect(project.createdBy).toEqual(userRecord.uid);
+    expect(project.createdBy).toEqual(userRecord.displayName);
     expect(project.tasks).toEqual([]);
     expect(project.members).toEqual([]);
   });
@@ -80,7 +85,8 @@ describe('Get, Create and Update Projects', () => {
     expect(response.statusCode).toEqual(200);
     expect(response.body).toBeInstanceOf(Array);
     const project = response.body[0];
-    expect(project.createdBy).toEqual(userRecord.uid);
+    expect(project.createdBy).toEqual(userRecord.displayName);
+    expect(project.userId).toEqual(userRecord.uid)
     expect(project.name).toEqual('A new project');
   });
 
@@ -89,7 +95,8 @@ describe('Get, Create and Update Projects', () => {
       .get(`/api/projects/${project._id}`)
       .set('Authorization', `Bearer ${token}`);
     expect(response.statusCode).toEqual(200);
-    expect(project.createdBy).toEqual(userRecord.uid);
+    expect(project.createdBy).toEqual(userRecord.displayName);
+    expect(project.userId).toEqual(userRecord.uid)
     expect(project.name).toEqual('A new project');
     expect(project.description).toEqual('This is a test project');
   });
@@ -110,11 +117,10 @@ describe('Get, Create and Update Projects', () => {
   it('Searches for a user using email address', async () => {
     const response = await request(app)
       .get(`/api/projects/${project._id}/members/search`)
-      .query({ email: 'john_test_user@mail.com' })
+      .query({ email:'test_User33@testmail.com'})
       .set('Authorization', `Bearer ${token}`);
     expect(response.statusCode).toEqual(200);
     expect(response.body.uid).toEqual(userRecord.uid);
-    expect(response.body.email).toEqual('john_test_user@mail.com');
   });
 
   it('Adds a user to project members', async () => {
@@ -277,7 +283,8 @@ describe('Get, Create and Update Comments', () => {
     expect(response.statusCode).toEqual(201);
     expect(comment.content).toEqual('test comment');
     expect(comment.task).toEqual(task._id);
-    expect(comment.createdBy).toEqual(userRecord.uid);
+    expect(comment.createdBy).toEqual(userRecord.displayName);
+    expect(comment.userId).toEqual(userRecord.uid)
   });
 
   it('Gets all comments on a task', async () => {
