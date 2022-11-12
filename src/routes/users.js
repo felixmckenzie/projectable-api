@@ -15,9 +15,10 @@ usersRouter.post(
       const newUserDetails = {
         email: req.body.email,
         password: req.body.password,
-        displayName: req.body.username,
+        username: req.body.username,
       };
       const registrationOutcome = await registerUser(newUserDetails);
+       
 
       if (registrationOutcome.error) {
         console.log(registrationOutcome);
@@ -31,6 +32,8 @@ usersRouter.post(
         return res.json({ error: loginOutcome.error });
       }
 
+      
+     
       res.status(200).json(loginOutcome);
     } catch (error) {
       res.status(400).end();

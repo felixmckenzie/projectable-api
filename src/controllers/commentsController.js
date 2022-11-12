@@ -7,7 +7,8 @@ export async function createComment(req, res) {
     const newComment = await Comment.create({
       content: req.body.content,
       task: req.params.taskId,
-      createdBy: req.userId,
+      createdBy: req.user.username,
+      userId: req.user.uid
     });
 
     const taskToUpdate = await Task.findByIdAndUpdate(

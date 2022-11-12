@@ -6,8 +6,10 @@ export async function createProject(req, res) {
     const newProject = new Project({
       name: req.body.name,
       description: req.body.description,
-      createdBy: req.userId,
+      createdBy: req.user.username,
+      userId: req.user.uid
     });
+
     const savedProject = await newProject.save();
     return res.status(201).json(savedProject);
   } catch (error) {
@@ -19,7 +21,7 @@ export async function createProject(req, res) {
 export async function getAllProjects(req, res) {
   try {
     const projects = await Project.find({
-      $or: [{ createdBy: req.userId }, { members: { userId: req.userId } }],
+      $or: [{ userId: req.user.uid }, { members: { userId: req.user.uid } }],
     });
 
     res.status(200).json(projects);
@@ -33,7 +35,7 @@ export async function getOneProject(req, res) {
   try {
     const project = await Project.findOne({
       _id: req.params.projectId,
-      $or: [{ createdBy: req.userId }, { members: { userId: req.userId } }],
+      $or: [{userId: req.user.uid }, { members: { userId: req.user.uid } }],
     })
       .populate('tasks')
       .populate('members');
@@ -83,7 +85,7 @@ export async function removeOneProject(req, res) {
   try {
     const removed = await Project.findOneAndRemove({
       _id: req.params.projectId,
-      createdBy: req.userId,
+      userId: req.user.uid,
     });
     res.status(200).json(removed);
   } catch (error) {

@@ -7,7 +7,8 @@ export async function createTask(req, res) {
     const taskDetails = {
       brief: req.body.brief,
       description: req.body.description,
-      createdBy: req.userId,
+      createdBy: req.user.username,
+      userId: req.user.uid,
       projectId: req.params.projectId,
     };
     const newTask = await Task.create(taskDetails);
