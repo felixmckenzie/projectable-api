@@ -14,7 +14,7 @@ export async function createTask(req, res) {
     const newTask = await Task.create(taskDetails);
 
     const projectToUpdate = await Project.findByIdAndUpdate(
-     {_id: newTask.projectId},
+      { _id: newTask.projectId },
       {
         $push: { tasks: newTask },
       },
@@ -49,7 +49,7 @@ export async function getAllTasks(req, res) {
 
 export async function getOneTask(req, res) {
   try {
-    const task = await Task.findById(req.params.taskId);
+    const task = await Task.findById(req.params.taskId).populate('comments');
     res.status(200).json(task);
   } catch (error) {
     logger.info(error.message);
@@ -81,7 +81,7 @@ export async function deleteOneTask(req, res) {
       _id: req.params.taskId,
     });
 
-    res.status(200).json(removed)
+    res.status(200).json(removed);
   } catch (error) {
     logger.info(error.message);
     res.status(400).end();
