@@ -6,9 +6,9 @@ export async function createComment(req, res) {
   try {
     const newComment = await Comment.create({
       content: req.body.content,
-      task: req.params.taskId,
+      task: req.body.taskId,
       createdBy: req.user.username,
-      userId: req.user.uid
+      userId: req.user.uid,
     });
 
     const taskToUpdate = await Task.findByIdAndUpdate(
@@ -57,7 +57,7 @@ export async function updateComment(req, res) {
   try {
     const commentToUpdate = await Comment.findByIdAndUpdate(
       { _id: req.params.commentId },
-     { ...req.body},
+      { ...req.body },
       { new: true }
     );
     res.status(200).json(commentToUpdate);
