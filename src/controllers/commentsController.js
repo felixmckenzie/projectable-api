@@ -6,7 +6,7 @@ export async function createComment(req, res) {
   try {
     const newComment = await Comment.create({
       content: req.body.content,
-      task: req.body.taskId,
+      task: req.params.taskId,
       createdBy: req.user.username,
       userId: req.user.uid,
     });
