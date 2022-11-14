@@ -18,7 +18,7 @@ projectsRouter.post('/', createProject);
 
 projectsRouter.get('/:projectId', getOneProject);
 
-projectsRouter.get('/:projectId/members/search', getUserByEmail);
+projectsRouter.get('/:projectId/settings', getUserByEmail);
 
 projectsRouter.put('/:projectId/members/new', addMember);
 

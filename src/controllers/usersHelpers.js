@@ -64,9 +64,15 @@ export async function checkIfAuthenticated(req, res, next) {
 
 export async function getUserByEmail(req, res) {
   try {
-    const email = req.query.email;
-    const userRecord = await admin.auth().getUserByEmail(email);
-    res.status(200).json(userRecord);
+    admin
+      .auth()
+      .listUsers(1000)
+      .then((listUsersResult) => {
+        const result = listUsersResult.users.filter((userRecord) => {
+          return userRecord.email.includes(req.query.email)
+        });
+        res.status(200).json(result);
+      });
   } catch (error) {
     logger.info(error.message);
     res.status(400).end();
