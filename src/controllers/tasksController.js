@@ -32,7 +32,7 @@ export async function createTask(req, res) {
   }
 }
 
-export async function getAllTasks(req, res) {
+export async function getAllProjectTasks(req, res) {
   try {
     const tasks = await Task.find({
       projectId: req.params.projectId,
@@ -44,6 +44,20 @@ export async function getAllTasks(req, res) {
   } catch (error) {
     logger.info(error.messge);
     res.status(400).end();
+  }
+}
+
+export async function getAllAssignedTasks(req, res) {
+  try {
+    const tasks = await Task.find({
+      assignedTo: req.user.uid,
+    })
+      .lean()
+      .exec();
+
+    res.status(200).json(tasks);
+  } catch (error) {
+    logger.info(error.message);
   }
 }
 

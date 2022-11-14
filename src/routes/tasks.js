@@ -2,14 +2,17 @@ import { Router } from 'express';
 import commentsRouter from './comments.js';
 import {
   createTask,
-  getAllTasks,
+  getAllProjectTasks,
+  getAllAssignedTasks,
   getOneTask,
   updateTask,
   deleteOneTask,
 } from '../controllers/tasksController.js';
 const tasksRouter = Router({ mergeParams: true });
 
-tasksRouter.get('/', getAllTasks);
+tasksRouter.get('/', getAllProjectTasks);
+
+tasksRouter.get('/', getAllAssignedTasks);
 
 tasksRouter.post('/', createTask);
 
