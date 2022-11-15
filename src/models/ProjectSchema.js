@@ -26,7 +26,7 @@ const projectSchema = new Schema(
         ref: 'task',
       },
     ],
-    members: [{ username: String, userId: String, email: String }],
+    members: [{ username: String, uid: String, email: String }],
   },
   { timestamps: true }
 );

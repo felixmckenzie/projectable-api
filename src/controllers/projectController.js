@@ -66,7 +66,11 @@ export async function updateProject(req, res) {
 
 export async function addMember(req, res) {
   try {
-    const member = req.body;
+    const member = {
+      email: req.body.email,
+      username: req.body.displayName,
+      uid: req.body.uid,
+    };
     const updatedProject = await Project.findByIdAndUpdate(
       { _id: req.params.projectId },
       {
@@ -86,7 +90,7 @@ export async function removeMember(req, res) {
     const member = req.body;
     const updatedProject = await Project.findByIdAndUpdate(
       { _id: req.params.projectId },
-      { $pull: { members: { _id: member.uid } } },
+      { $pull: { members: { uid: member.uid } } },
       { new: true }
     );
     res.status(200).json(updatedProject);
