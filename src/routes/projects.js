@@ -8,6 +8,7 @@ import {
   removeOneProject,
   updateProject,
   addMember,
+  removeMember
 } from '../controllers/projectController.js';
 
 const projectsRouter = Router();
@@ -21,6 +22,8 @@ projectsRouter.get('/:projectId', getOneProject);
 projectsRouter.get('/:projectId/settings', getUserByEmail);
 
 projectsRouter.put('/:projectId/members/new', addMember);
+
+projectsRouter.put('/:projectId/members/remove', removeMember)
 
 projectsRouter.put('/:projectId', updateProject);
 

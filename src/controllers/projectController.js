@@ -7,7 +7,7 @@ export async function createProject(req, res) {
       name: req.body.name,
       description: req.body.description,
       createdBy: req.user.username,
-      userId: req.user.uid
+      userId: req.user.uid,
     });
 
     const savedProject = await newProject.save();
@@ -35,7 +35,7 @@ export async function getOneProject(req, res) {
   try {
     const project = await Project.findOne({
       _id: req.params.projectId,
-      $or: [{userId: req.user.uid }, { members: { userId: req.user.uid } }],
+      $or: [{ userId: req.user.uid }, { members: { userId: req.user.uid } }],
     })
       .populate('tasks')
       .populate('members');
@@ -72,6 +72,21 @@ export async function addMember(req, res) {
       {
         $push: { members: member },
       },
+      { new: true }
+    );
+    res.status(200).json(updatedProject);
+  } catch (error) {
+    logger.info(error.message);
+    res.status(400).end();
+  }
+}
+
+export async function removeMember(req, res) {
+  try {
+    const member = req.body;
+    const updatedProject = await Project.findByIdAndUpdate(
+      { _id: req.params.projectId },
+      { $pull: { members: { _id: member.uid } } },
       { new: true }
     );
     res.status(200).json(updatedProject);
