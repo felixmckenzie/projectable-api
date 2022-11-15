@@ -2,35 +2,34 @@ import request from 'supertest';
 import app from '../src/server.js';
 import { registerUser, loginUser } from '../src/controllers/usersHelpers.js';
 import admin from 'firebase-admin';
+import { getAuth, signOut } from 'firebase/auth';
 import { databaseConnector, databaseDisconnector } from '../src/database.js';
 
 const DATABASE_URI =
   process.env.DATABASE_URI || 'mongodb://localhost:27017/projectable-tests';
 
 const newUserDetails = {
-  email: 'test_User33@testmail.com',
-  password: 'TestUser33',
-  firstName: 'NewUserFirstName',
-  lastName: 'NewUserLastName',
-  username: 'TestUsername',
+  email: 'tim_test90@testmail.com',
+  password: 'timtest123',
+  username: 'Tim',
 };
 
 let userRecord;
-let loginOutcome;
 let token;
 let project;
 let task;
 let comment;
 
-beforeAll(async () => {
-  try {
-    userRecord = await registerUser(newUserDetails);
-    loginOutcome = await loginUser(newUserDetails);
-    token = loginOutcome.token;
-  } catch (error) {
-    console.log(error);
-  }
-});
+// beforeAll(async () => {
+//   try {
+//     userRecord = await registerUser(newUserDetails);
+//     loginOutcome = await loginUser(newUserDetails);
+//     console.log(loginOutcome)
+//     token = loginOutcome.token;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
 
 afterAll(async () => {
   await admin
@@ -53,10 +52,31 @@ afterEach(async () => {
   await databaseDisconnector();
 });
 
+describe('Authenticate users', () => {
+  it('Registers new user and logs them in', async () => {
+    const response = await request(app)
+      .post('/users/register')
+      .send(newUserDetails);
+    expect(response.statusCode).toEqual(201);
+    userRecord = response.body;
+    token = response.body.token;
+  });
 
-describe('Register User and Login Them In', ()=>{
-  
-})
+  it('Logs the current user out and then logs them in', async () => {
+    const auth = getAuth();
+    signOut(auth)
+      .then(async () => {
+        const response = await request(app)
+          .post('/users/login')
+          .send(newUserDetails);
+        expect(response.statusCode).toEqual(200);
+        expect(response.body.email).toEqual('tim_test90@testmail.com');
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  });
+});
 
 describe('Get, Create and Update Projects', () => {
   it('creates a project', async () => {
@@ -67,7 +87,7 @@ describe('Get, Create and Update Projects', () => {
         name: 'A new project',
         description: 'This is a test project',
         createdBy: userRecord.displayName,
-        userId: userRecord.uid
+        userId: userRecord.uid,
       });
     expect(response.statusCode).toEqual(201);
     project = response.body;
@@ -86,7 +106,7 @@ describe('Get, Create and Update Projects', () => {
     expect(response.body).toBeInstanceOf(Array);
     const project = response.body[0];
     expect(project.createdBy).toEqual(userRecord.displayName);
-    expect(project.userId).toEqual(userRecord.uid)
+    expect(project.userId).toEqual(userRecord.uid);
     expect(project.name).toEqual('A new project');
   });
 
@@ -96,7 +116,7 @@ describe('Get, Create and Update Projects', () => {
       .set('Authorization', `Bearer ${token}`);
     expect(response.statusCode).toEqual(200);
     expect(project.createdBy).toEqual(userRecord.displayName);
-    expect(project.userId).toEqual(userRecord.uid)
+    expect(project.userId).toEqual(userRecord.uid);
     expect(project.name).toEqual('A new project');
     expect(project.description).toEqual('This is a test project');
   });
@@ -117,7 +137,7 @@ describe('Get, Create and Update Projects', () => {
   it('Searches for a user using email address', async () => {
     const response = await request(app)
       .get(`/api/projects/${project._id}/members/search`)
-      .query({ email:'test_User33@testmail.com'})
+      .query({ email: 'tim_test90@testmail.com' })
       .set('Authorization', `Bearer ${token}`);
     expect(response.statusCode).toEqual(200);
     expect(response.body.uid).toEqual(userRecord.uid);
@@ -217,8 +237,6 @@ describe('Get, Create and Update Tasks', () => {
     expect(task.brief).toEqual('Updated name for task');
     expect(task.description).toEqual('Updated description for task');
   });
-
-  it('Deletes a single task', async () => {});
 });
 
 describe('Error scenarios for task routes', () => {
@@ -252,12 +270,12 @@ describe('Error scenarios for task routes', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         brief: 'Failed task creation',
-        description: 'Invalid project id'
+        description: 'Invalid project id',
       });
-      expect(response.statusCode).toEqual(400)
-      expect(response.error.message).toEqual(
-        'cannot POST /api/projects/39034093448n/tasks (400)'
-      );
+    expect(response.statusCode).toEqual(400);
+    expect(response.error.message).toEqual(
+      'cannot POST /api/projects/39034093448n/tasks (400)'
+    );
   });
 
   it('fails to update a task with invalid task id', async () => {
@@ -284,7 +302,7 @@ describe('Get, Create and Update Comments', () => {
     expect(comment.content).toEqual('test comment');
     expect(comment.task).toEqual(task._id);
     expect(comment.createdBy).toEqual(userRecord.displayName);
-    expect(comment.userId).toEqual(userRecord.uid)
+    expect(comment.userId).toEqual(userRecord.uid);
   });
 
   it('Gets all comments on a task', async () => {

@@ -34,7 +34,7 @@ usersRouter.post(
 
       
      
-      res.status(200).json(loginOutcome);
+      res.status(201).json(loginOutcome);
     } catch (error) {
       res.status(400).end();
     }
@@ -50,7 +50,7 @@ usersRouter.post('/login', schemaValidator(loginSchema), async (req, res) => {
     return res.json({ error: loginOutcome.error });
   }
 
-  res.json(loginOutcome);
+  res.status(200).json(loginOutcome);
 });
 
 export default usersRouter;
