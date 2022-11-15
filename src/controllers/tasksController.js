@@ -52,8 +52,7 @@ export async function getAllAssignedTasks(req, res) {
     const tasks = await Task.find({
       assignedTo: req.user.uid,
     })
-      .lean()
-      .exec();
+     
 
     res.status(200).json(tasks);
   } catch (error) {
