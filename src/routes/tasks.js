@@ -10,9 +10,9 @@ import {
 } from '../controllers/tasksController.js';
 const tasksRouter = Router({ mergeParams: true });
 
-tasksRouter.get('/', getAllProjectTasks);
-
 tasksRouter.get('/', getAllAssignedTasks);
+
+tasksRouter.get('/', getAllProjectTasks);
 
 tasksRouter.post('/', createTask);
 

@@ -134,14 +134,14 @@ describe('Get, Create and Update Projects', () => {
     expect(project.description).toEqual('This is a test project');
   });
 
-  it('Searches for a user using email address', async () => {
-    const response = await request(app)
-      .get(`/api/projects/${project._id}/members/search`)
-      .query({ email: 'tim_test90@testmail.com' })
-      .set('Authorization', `Bearer ${token}`);
-    expect(response.statusCode).toEqual(200);
-    expect(response.body.uid).toEqual(userRecord.uid);
-  });
+  // it('Searches for a user using email address', async () => {
+  //   const response = await request(app)
+  //     .get(`/api/projects/${project._id}/members/search`)
+  //     .query({ email: 'tim_test90@testmail.com' })
+  //     .set('Authorization', `Bearer ${token}`);
+  //   expect(response.statusCode).toEqual(200);
+  //   expect(response.body.uid).toEqual(userRecord.uid);
+  // });
 
   it('Adds a user to project members', async () => {
     const response = await request(app)
@@ -231,11 +231,21 @@ describe('Get, Create and Update Tasks', () => {
         brief: 'Updated name for task',
         description: 'Updated description for task',
         deadline: new Date('2022-12-17').toString(),
+        assignedTo: userRecord.uid,
       });
     expect(response.statusCode).toEqual(200);
     task = response.body;
     expect(task.brief).toEqual('Updated name for task');
     expect(task.description).toEqual('Updated description for task');
+  });
+
+  it('Retrieves all tasks for a user', async () => {
+    const response = await request(app)
+      .get('/api/tasks')
+      .set('Authorization', `Bearer ${token}`);
+      expect(response.statusCode).toEqual(200)
+      expect(response.body).toBeInstanceOf(Array)
+      expect(response.body[0].brief).toEqual('Updated name for task');
   });
 });
 
