@@ -17,7 +17,6 @@ const taskSchema = new Schema(
     },
     completed: {
       type: Boolean,
-      required: true,
     },
     assignedTo: {
       type: String,
