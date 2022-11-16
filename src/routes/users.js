@@ -1,5 +1,10 @@
 import { Router } from 'express';
-import { registerUser, loginUser } from '../controllers/usersHelpers.js';
+import {
+  registerUser,
+  loginUser,
+  updateUserDetails,
+  getUserById,
+} from '../controllers/usersHelpers.js';
 import schemaValidator from '../middleware/schemaValidator.js';
 import registrationSchema from '../validation-schemas/registrationSchema.js';
 import loginSchema from '../validation-schemas/loginSchema.js';
@@ -18,7 +23,6 @@ usersRouter.post(
         username: req.body.username,
       };
       const registrationOutcome = await registerUser(newUserDetails);
-       
 
       if (registrationOutcome.error) {
         console.log(registrationOutcome);
@@ -32,8 +36,6 @@ usersRouter.post(
         return res.json({ error: loginOutcome.error });
       }
 
-      
-     
       res.status(201).json(loginOutcome);
     } catch (error) {
       res.status(400).end();
@@ -54,3 +56,7 @@ usersRouter.post('/login', schemaValidator(loginSchema), async (req, res) => {
 });
 
 export default usersRouter;
+
+usersRouter.get('/api/user/find', getUserById);
+
+usersRouter.put('/api/user/update', updateUserDetails);
