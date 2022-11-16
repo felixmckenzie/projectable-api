@@ -106,6 +106,9 @@ export async function removeOneProject(req, res) {
       _id: req.params.projectId,
       userId: req.user.uid,
     });
+
+
+    
     res.status(200).json(removed);
   } catch (error) {
     logger.info(error.message);
