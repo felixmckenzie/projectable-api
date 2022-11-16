@@ -15,10 +15,13 @@ const taskSchema = new Schema(
     deadline: {
       type: Date,
     },
+    completed: {
+      type: Boolean,
+    },
     assignedTo: {
       type: String,
     },
-    priority:{
+    priority: {
       type: String,
     },
     createdBy: {

@@ -105,13 +105,6 @@ export async function removeOneProject(req, res) {
   try {
     const projectToRemove = await Project.findOne({
       _id: req.params.projectId,
-    }).populate('tasks');
-
-    for (const task of projectToRemove.tasks) {
-      task.delete();
-    }
-    projectToRemove.delete();
-    res.status(200).json(projectToRemove);
   } catch (error) {
     logger.info(error.message);
     res.status(400).end();
