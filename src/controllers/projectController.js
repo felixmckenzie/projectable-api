@@ -1,4 +1,5 @@
 import { Project } from '../models/ProjectSchema.js';
+import { Task } from '../models/TaskSchema.js';
 import logger from '../config/logger.js';
 
 export async function createProject(req, res) {
@@ -102,11 +103,15 @@ export async function removeMember(req, res) {
 
 export async function removeOneProject(req, res) {
   try {
-    const removed = await Project.findOneAndRemove({
+    const projectToRemove = await Project.findOne({
       _id: req.params.projectId,
-      userId: req.user.uid,
-    });
-    res.status(200).json(removed);
+    }).populate('tasks');
+
+    for (const task of projectToRemove.tasks) {
+      task.delete();
+    }
+    projectToRemove.delete();
+    res.status(200).json(projectToRemove);
   } catch (error) {
     logger.info(error.message);
     res.status(400).end();
