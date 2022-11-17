@@ -92,12 +92,8 @@ export async function getUserById(req, res) {
 
 export async function updateUserDetails(req, res) {
   try {
-    const uid = req.user.uid;
-    const updatedUser = await admin.auth().updateUser(uid, {
-      email: req.body.email,
-      emailVerified: true,
-      password: req.body.password,
-      displayName: req.body.displayName,
+    const updatedUser = await admin.auth().updateUser(req.user.uid, {
+    ...req.body
     });
     res.status(200).json(updatedUser);
   } catch (error) {

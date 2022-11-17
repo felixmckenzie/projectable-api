@@ -1,10 +1,5 @@
 import { Router } from 'express';
-import {
-  registerUser,
-  loginUser,
-  updateUserDetails,
-  getUserById,
-} from '../controllers/usersHelpers.js';
+import { registerUser, loginUser } from '../controllers/usersHelpers.js';
 import schemaValidator from '../middleware/schemaValidator.js';
 import registrationSchema from '../validation-schemas/registrationSchema.js';
 import loginSchema from '../validation-schemas/loginSchema.js';
@@ -56,7 +51,3 @@ usersRouter.post('/login', schemaValidator(loginSchema), async (req, res) => {
 });
 
 export default usersRouter;
-
-usersRouter.get('/api/user/find', getUserById);
-
-usersRouter.put('/api/user/update', updateUserDetails);
