@@ -92,10 +92,22 @@ export async function getUserById(req, res) {
 
 export async function updateUserDetails(req, res) {
   try {
-    const updatedUser = await admin.auth().updateUser(req.user.uid, {
-    ...req.body
+    const uid = req.user.uid;
+    const updatedUser = await admin.auth().updateUser(uid, {
+      ...req.body,
     });
     res.status(200).json(updatedUser);
+  } catch (error) {
+    logger.info(error.message);
+    res.status(400).end();
+  }
+}
+
+export async function deleteUser(req, res) {
+  try {
+    const uid = req.user.uid;
+    const deletedUser = await admin.auth().deleteUser(uid);
+    res.status(200).json(deletedUser);
   } catch (error) {
     logger.info(error.message);
     res.status(400).end();
