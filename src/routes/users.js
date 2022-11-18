@@ -18,7 +18,6 @@ usersRouter.post(
         username: req.body.username,
       };
       const registrationOutcome = await registerUser(newUserDetails);
-       
 
       if (registrationOutcome.error) {
         console.log(registrationOutcome);
@@ -32,8 +31,6 @@ usersRouter.post(
         return res.json({ error: loginOutcome.error });
       }
 
-      
-     
       res.status(201).json(loginOutcome);
     } catch (error) {
       res.status(400).end();

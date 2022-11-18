@@ -37,6 +37,8 @@ if (process.env.NODE_ENV !== 'test') {
 app.use('/users', routes.usersRouter);
 //protected routes
 app.use('/api', checkIfAuthenticated);
+//Update User router
+app.use('/api/user', routes.updateUserRouter);
 // Projects router:
 app.use('/api/projects', routes.projectsRouter);
 // Tasks router:
