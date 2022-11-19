@@ -20,17 +20,6 @@ let project;
 let task;
 let comment;
 
-// beforeAll(async () => {
-//   try {
-//     userRecord = await registerUser(newUserDetails);
-//     loginOutcome = await loginUser(newUserDetails);
-//     console.log(loginOutcome)
-//     token = loginOutcome.token;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
-
 afterAll(async () => {
   await admin
     .auth()
@@ -75,6 +64,30 @@ describe('Authenticate users', () => {
       .catch((error) => {
         console.log(error);
       });
+  });
+});
+
+describe('Update user details', () => {
+  it('retrieves a user by id', async () => {
+    const response = await request(app)
+      .get('/api/user')
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.statusCode).toEqual(200);
+    expect(response.body.email).toEqual(userRecord.email);
+    expect(response.body.displayName).toEqual(userRecord.displayName);
+  });
+
+  it('updates user display name and email', async () => {
+    const response = await request(app)
+      .put('/api/user/update')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        email: 'timmytest90@mail.com',
+        displayName: 'timbotester',
+      });
+    expect(response.statusCode).toEqual(200);
+    expect(response.body.email).toEqual('timmytest90@mail.com');
+    expect(response.body.displayName).toEqual('timbotester');
   });
 });
 
@@ -134,14 +147,14 @@ describe('Get, Create and Update Projects', () => {
     expect(project.description).toEqual('This is a test project');
   });
 
-  // it('Searches for a user using email address', async () => {
-  //   const response = await request(app)
-  //     .get(`/api/projects/${project._id}/members/search`)
-  //     .query({ email: 'tim_test90@testmail.com' })
-  //     .set('Authorization', `Bearer ${token}`);
-  //   expect(response.statusCode).toEqual(200);
-  //   expect(response.body.uid).toEqual(userRecord.uid);
-  // });
+  it('Returns array of users where keyword is found in users email address', async () => {
+    const response = await request(app)
+      .get(`/api/projects/${project._id}/settings`)
+      .query({ email: 'tim' })
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.statusCode).toEqual(200);
+    expect(response.body).toBeInstanceOf(Array);
+  });
 
   it('Adds a user to project members', async () => {
     const response = await request(app)
@@ -153,6 +166,17 @@ describe('Get, Create and Update Projects', () => {
         userId: userRecord.uid,
       });
     expect(response.statusCode).toEqual(200);
+  });
+
+  it('Removes a user from a project', async () => {
+    const response = await request(app)
+      .put(`/api/projects/${project._id}/members/remove`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        userRecord,
+      });
+    expect(response.statusCode).toEqual(200);
+    expect(response.body.members).toEqual([]);
   });
 });
 
@@ -186,6 +210,25 @@ describe('Error scenarios for project routes', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         name: 'A better name for the project',
+      });
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it('fails to add member to invalid project', async () => {
+    const response = await request(app)
+      .put(`/api/projects/fnjfn3ofjtj670409/members/new`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({});
+    expect(response.statusCode).toEqual(400);
+  });
+
+  it('fails to remove a member from an invalid project', async () => {
+    const response = await request(app)
+      .put(`/api/projects/neogn4ogtn405j05jj0590jn/members/remove`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        displayName: 'Fail case',
+        uid: '',
       });
     expect(response.statusCode).toEqual(400);
   });
@@ -243,9 +286,9 @@ describe('Get, Create and Update Tasks', () => {
     const response = await request(app)
       .get('/api/tasks')
       .set('Authorization', `Bearer ${token}`);
-      expect(response.statusCode).toEqual(200)
-      expect(response.body).toBeInstanceOf(Array)
-      expect(response.body[0].brief).toEqual('Updated name for task');
+    expect(response.statusCode).toEqual(200);
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body[0].brief).toEqual('Updated name for task');
   });
 });
 
@@ -410,3 +453,5 @@ describe('Delete Projects, Tasks and Comments', () => {
     expect(response.body._id).toEqual(project._id);
   });
 });
+
+

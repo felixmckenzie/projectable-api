@@ -67,17 +67,19 @@ export async function updateProject(req, res) {
 
 export async function addMember(req, res) {
   try {
+    const email = req.body.email;
+    const username = req.body.displayName;
+    const uid = req.body.uid;
     const member = {
-      email: req.body.email,
-      username: req.body.displayName,
-      uid: req.body.uid,
+      email: email,
+      username: username,
+      uid: uid,
     };
     const updatedProject = await Project.findByIdAndUpdate(
       { _id: req.params.projectId },
       {
         $push: { members: member },
-      },
-      { new: true }
+      }
     );
     res.status(200).json(updatedProject);
   } catch (error) {
