@@ -8,6 +8,7 @@ export async function createTask(req, res) {
       brief: req.body.brief,
       description: req.body.description,
       createdBy: req.user.username,
+      priority: req.body.priority,
       userId: req.user.uid,
       projectId: req.params.projectId,
     };
@@ -51,8 +52,7 @@ export async function getAllAssignedTasks(req, res) {
   try {
     const tasks = await Task.find({
       assignedTo: req.user.uid,
-    })
-     
+    });
 
     res.status(200).json(tasks);
   } catch (error) {
