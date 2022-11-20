@@ -22,7 +22,7 @@ export async function createProject(req, res) {
 export async function getAllProjects(req, res) {
   try {
     const projects = await Project.find({
-      $or: [{ userId: req.user.uid }, { members: { userId: req.user.uid } }],
+      $or: [{ userId: req.user.uid }, { members:{$elemMatch: { userId: req.user.uid }} }],
     });
 
     res.status(200).json(projects);
