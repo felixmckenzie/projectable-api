@@ -1,5 +1,5 @@
 import express from 'express';
-import cors from './config/cors.js';
+import cors from 'cors';
 import routes from './routes/index.js';
 import 'dotenv/config';
 import { databaseConnector } from './database.js';
@@ -9,7 +9,12 @@ import { checkIfAuthenticated } from './controllers/usersHelpers.js';
 
 const app = express();
 
-app.use(cors);
+const corsOptions = {
+  origin: ['http://localhost:3000', process.env.CORS_ORIGIN],
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
