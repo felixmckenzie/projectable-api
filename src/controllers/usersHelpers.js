@@ -3,6 +3,7 @@ import { initializeApp } from 'firebase/app';
 import { firebaseClientConfig } from '../config/firebaseClientKey.js';
 import logger from '../config/logger.js';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { Project } from '../models/ProjectSchema.js';
 
 // Initialize the Firebase Client SDK
 initializeApp(firebaseClientConfig);
@@ -106,6 +107,15 @@ export async function updateUserDetails(req, res) {
 export async function deleteUser(req, res) {
   try {
     const uid = req.user.uid;
+    const updatedProjects = await Project.updateMany(
+      { members: { $elemMatch: { userId: uid } } },
+      { $pull: { members: { uid: uid } } },
+      { multi: true }
+    );
+    if (updatedProjects.error) {
+      throw new Error('Project members not updated');
+    }
+
     const deletedUser = await admin.auth().deleteUser(uid);
     res.status(200).json(deletedUser);
   } catch (error) {
