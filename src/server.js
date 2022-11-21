@@ -10,7 +10,7 @@ import { checkIfAuthenticated } from './controllers/usersHelpers.js';
 const app = express();
 
 const corsOptions = {
-  origin: ['http://localhost:3000', process.env.CORS_ORIGIN],
+  origin: ['http://localhost:3000', 'https://projectable.netlify.app/'],
   optionsSuccessStatus: 200,
 };
 app.options('*', cors());
