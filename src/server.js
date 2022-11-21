@@ -13,7 +13,7 @@ const corsOptions = {
   origin: ['http://localhost:3000', process.env.CORS_ORIGIN],
   optionsSuccessStatus: 200,
 };
-
+app.options('*', cors());
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
