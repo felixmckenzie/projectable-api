@@ -4,6 +4,8 @@ import { firebaseClientConfig } from '../config/firebaseClientKey.js';
 import logger from '../config/logger.js';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { Project } from '../models/ProjectSchema.js';
+import { Task } from '../models/TaskSchema.js';
+import { Comment } from '../models/CommentSchema.js';
 
 // Initialize the Firebase Client SDK
 initializeApp(firebaseClientConfig);
@@ -115,6 +117,10 @@ export async function deleteUser(req, res) {
     if (updatedProjects.error) {
       throw new Error('Project members not updated');
     }
+
+    await Task.deleteMany({ userId: uid });
+    await Comment.deleteMany({ userId: uid });
+    await Project.deleteMany({ userId: uid });
 
     const deletedUser = await admin.auth().deleteUser(uid);
     res.status(200).json(deletedUser);
