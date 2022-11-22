@@ -9,6 +9,7 @@ export async function createTask(req, res) {
       description: req.body.description,
       createdBy: req.user.username,
       priority: req.body.priority,
+      deadline: req.body.deadline,
       userId: req.user.uid,
       projectId: req.params.projectId,
     };
